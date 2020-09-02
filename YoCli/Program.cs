@@ -1,8 +1,11 @@
 ﻿using McMaster.Extensions.CommandLineUtils;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using System;
 using System.Threading.Tasks;
 using YoCli.Commands;
+using YoCli.Services.Implementations;
+using YoCli.Services.Interfaces;
 
 namespace YoCli
 {
@@ -19,7 +22,7 @@ namespace YoCli
         {
             var builder = new HostBuilder().ConfigureServices((hostContext, services) =>
             {
-
+                services.AddSingleton<INoteService, NoteService>();
             });
 
             try
