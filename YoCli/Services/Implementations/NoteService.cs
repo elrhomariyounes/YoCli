@@ -1,6 +1,7 @@
 ﻿using McMaster.Extensions.CommandLineUtils;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -23,23 +24,42 @@ namespace YoCli.Services.Implementations
 
         public Task<int> ReadNotesAsync(Dictionary<string, bool> options)
         {
+            // Get options values
             bool isSetTodayOption = options["Today"];
             bool isSetYesterdayOption = options["Yesterday"];
+            bool isSetWeekOption = options["Week"];
 
-            IEnumerable<Note> notes = null;
-            if(isSetTodayOption && isSetYesterdayOption)
+            //Check if more than one option is set
+            var dictionaryValues = options.Values.ToList();
+            if(dictionaryValues.Where(o => o == true).Count() > 1)
             {
                 _console.ForegroundColor = ConsoleColor.Red;
                 _console.WriteLine("Only one option should be set !!");
                 _console.ResetColor();
                 return Task.FromResult(1);
             }
+
+            // Init collection
+            IEnumerable<Note> notes = null;
                 
             //Filter notes
             if (isSetYesterdayOption)
+            {
                 notes = _notes.Where(n => n.WriteDate.Date == DateTime.Today.AddDays(-1));
+            }
+
             else
-                notes = _notes.Where(n => n.WriteDate.Date == DateTime.Today);
+            {
+                if (isSetWeekOption)
+                {
+                    notes = _notes.Where(n => CheckIfSameWeek(n.WriteDate, DateTime.Today));
+                }
+                else
+                {
+                    notes = _notes.Where(n => n.WriteDate.Date == DateTime.Today);
+                }
+            }
+                
 
             foreach (var note in notes)
             {
@@ -68,6 +88,15 @@ namespace YoCli.Services.Implementations
             await File.AppendAllLinesAsync(path, new string[] { note });
 
             return 1;
+        }
+
+        private bool CheckIfSameWeek(DateTime date1, DateTime date2)
+        {
+            var cal = DateTimeFormatInfo.CurrentInfo.Calendar;
+            var d1 = date1.Date.AddDays(-1 * (int)cal.GetDayOfWeek(date1));
+            var d2 = date2.Date.AddDays(-1 * (int)cal.GetDayOfWeek(date2));
+
+            return d1 == d2;
         }
 
         /// <summary>

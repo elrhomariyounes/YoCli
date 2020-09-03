@@ -15,16 +15,20 @@ namespace YoCli.Commands
         }
 
         [Option(CommandOptionType.NoValue, Description = "Read today notes")]
-        public bool Today { get; set; } = false;
+        public bool Today { get; set; }
 
         [Option(CommandOptionType.NoValue, Description = "Read yesterday notes")]
-        public bool Yesterday { get; }
+        public bool Yesterday { get; set; }
+
+        [Option(CommandOptionType.NoValue, Description = "Read current week notes")]
+        public bool Week { get; set; }
 
         protected override async Task<int> OnExecute(CommandLineApplication app)
         {
             var options = new Dictionary<string, bool>();
             options.Add("Today", this.Today);
             options.Add("Yesterday", this.Yesterday);
+            options.Add("Week", this.Week);
             return await _noteService.ReadNotesAsync(options);
         }
     }
