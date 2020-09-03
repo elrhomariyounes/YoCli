@@ -7,7 +7,9 @@ namespace YoCli.Commands
     [Command(Name = "yo", OptionsComparison = System.StringComparison.InvariantCultureIgnoreCase)]
     [VersionOptionFromMember("--version",MemberName = nameof(GetVersion))]
     [Subcommand(
-        typeof(WriteCmd))]
+        typeof(WriteCmd),
+        typeof(ReadCmd))
+    ]
     public class YoCmd : BaseCli
     {
         public YoCmd(IConsole console)

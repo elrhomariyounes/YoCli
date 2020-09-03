@@ -21,10 +21,25 @@ namespace YoCli.Services.Implementations
             _notes = new List<Note>(this.GetNotes());
         }
 
-        public Task<int> ReadTodayNotesAsync()
+        public Task<int> ReadNotesAsync(Dictionary<string, bool> options)
         {
+            bool isSetTodayOption = options["Today"];
+            bool isSetYesterdayOption = options["Yesterday"];
+
+            IEnumerable<Note> notes = null;
+            if(isSetTodayOption && isSetYesterdayOption)
+            {
+                _console.ForegroundColor = ConsoleColor.Red;
+                _console.WriteLine("Only one option should be set !!");
+                _console.ResetColor();
+                return Task.FromResult(1);
+            }
+                
             //Filter notes
-            var notes = _notes.Where(n => n.WriteDate.Date == DateTime.Today);
+            if (isSetYesterdayOption)
+                notes = _notes.Where(n => n.WriteDate.Date == DateTime.Today.AddDays(-1));
+            else
+                notes = _notes.Where(n => n.WriteDate.Date == DateTime.Today);
 
             foreach (var note in notes)
             {
@@ -55,6 +70,10 @@ namespace YoCli.Services.Implementations
             return 1;
         }
 
+        /// <summary>
+        /// Read notes file and parse lines to notes
+        /// </summary>
+        /// <returns>List of notes</returns>
         private List<Note> GetNotes()
         {
             //File path

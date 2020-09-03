@@ -2,6 +2,7 @@
 using System;
 using System.IO;
 using System.Threading.Tasks;
+using YoCli.Services.Interfaces;
 
 namespace YoCli.Commands
 {
@@ -9,9 +10,10 @@ namespace YoCli.Commands
     [Command(Name = "write", Description = "Write a note")]
     public class WriteCmd : BaseCli
     {
-        public WriteCmd(IConsole console)
+        public WriteCmd(IConsole console, INoteService noteService)
         {
             _console = console;
+            _noteService = noteService;
         }
 
         [Argument(0)]
@@ -19,12 +21,7 @@ namespace YoCli.Commands
 
         protected override async Task<int> OnExecute(CommandLineApplication app)
         {
-            //TODO : Move to NoteService
-            var path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Notes.txt");
-            string note = DateTime.Now.ToString() + ":" + Note;
-            _console.WriteLine(note);
-            await File.AppendAllLinesAsync(path, new string[] { note });
-            return 1;
+            return await _noteService.WriteNoteAsync(Note);
         }
     }
 }

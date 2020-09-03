@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace YoCli.Services.Interfaces
 {
@@ -17,7 +18,8 @@ namespace YoCli.Services.Interfaces
         /// <summary>
         /// Fetch notes written today
         /// </summary>
+        /// <param name="options">Dictionary of sub command options</param>
         /// <returns></returns>
-        Task<int> ReadTodayNotesAsync();
+        Task<int> ReadNotesAsync(Dictionary<string, bool> options);
     }
 }
