@@ -5,6 +5,9 @@ using YoCli.Services.Interfaces;
 
 namespace YoCli.Commands
 {
+    /// <summary>
+    /// Represent the sub command read to the main command yo
+    /// </summary>
     [Command(Name = "read", Description = "Read notes")]
     public class ReadCmd : BaseCli
     {

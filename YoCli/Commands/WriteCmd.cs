@@ -7,6 +7,11 @@ using YoCli.Services.Interfaces;
 namespace YoCli.Commands
 {
 
+    /// <summary>
+    /// /// <summary>
+    /// Represent the sub command write to the main command yo
+    /// </summary>
+    /// </summary>
     [Command(Name = "write", Description = "Write a note")]
     public class WriteCmd : BaseCli
     {
