@@ -8,7 +8,8 @@ namespace YoCli.Commands
     [VersionOptionFromMember("--version",MemberName = nameof(GetVersion))]
     [Subcommand(
         typeof(WriteCmd),
-        typeof(ReadCmd))
+        typeof(ReadCmd),
+        typeof(FindCmd))
     ]
     public class YoCmd : BaseCli
     {

@@ -22,6 +22,59 @@ namespace YoCli.Services.Implementations
             _notes = new List<Note>(this.GetNotes());
         }
 
+        public Task<int> FindNotesAsync(string content, Dictionary<string, int> options)
+        {
+            IEnumerable<Note> notes = new List<Note>(this._notes);
+            int day = options["Day"];
+            int month = options["Month"];
+
+            //Check if there is no options
+            if (String.IsNullOrEmpty(content) && day == 0 & month == 0)
+            {
+                _console.ForegroundColor = ConsoleColor.DarkRed;
+                _console.WriteLine("Invalid command please choose an option. Run 'yo find --help' for more details");
+                _console.ResetColor();
+                return Task.FromResult(1);
+            }
+            else
+            {
+                int monthFilter = month;
+                if (month == 0)
+                    monthFilter = DateTime.Today.Month;
+                    
+                // Filter the content
+                if (!String.IsNullOrEmpty(content))
+                {
+                    notes = notes.Where(n => n.Content.ToLower().Contains(content.ToLower()));
+                }
+
+                //Filter by month
+                if(month != 0)
+                {
+                    notes = notes.Where(
+                        n => n.WriteDate.Date.Month == month &&
+                        n.WriteDate.Date.Year == DateTime.Today.Year);
+                }
+
+                //Filter by day
+                if (day != 0)
+                {
+                    notes = notes.Where(
+                        n => n.WriteDate.Date.Day == day &&
+                        n.WriteDate.Date.Month == monthFilter &&
+                        n.WriteDate.Date.Year == DateTime.Today.Year);
+                }
+
+            }
+
+            foreach (var note in notes)
+            {
+                _console.WriteLine($"- {note.WriteDate} : {note.Content}");
+            }
+
+            return Task.FromResult(1);
+        }
+
         public Task<int> ReadNotesAsync(Dictionary<string, bool> options)
         {
             // Get options values
@@ -33,7 +86,7 @@ namespace YoCli.Services.Implementations
             var dictionaryValues = options.Values.ToList();
             if(dictionaryValues.Where(o => o == true).Count() > 1)
             {
-                _console.ForegroundColor = ConsoleColor.Red;
+                _console.ForegroundColor = ConsoleColor.DarkRed;
                 _console.WriteLine("Only one option should be set !!");
                 _console.ResetColor();
                 return Task.FromResult(1);

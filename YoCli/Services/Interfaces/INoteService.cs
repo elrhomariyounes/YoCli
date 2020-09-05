@@ -21,5 +21,13 @@ namespace YoCli.Services.Interfaces
         /// <param name="options">Dictionary of sub command options</param>
         /// <returns></returns>
         Task<int> ReadNotesAsync(Dictionary<string, bool> options);
+
+        /// <summary>
+        /// Find notes
+        /// </summary>
+        /// <param name="content"></param>
+        /// <param name="options"></param>
+        /// <returns></returns>
+        Task<int> FindNotesAsync(string content, Dictionary<string, int> options);
     }
 }
