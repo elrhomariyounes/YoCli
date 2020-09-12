@@ -162,16 +162,21 @@ namespace YoCli.Services.Implementations
             var path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Notes.txt");
 
             //Read file
-            string[] fileLines = File.ReadAllLines(path);
-
-            var notes = new List<Note>();
-            foreach (var line in fileLines)
+            if (File.Exists(path))
             {
-                //Parse each line into a note
-                notes.Add(NoteParser.DeserializeNote(line));
+                string[] fileLines = File.ReadAllLines(path);
+
+                var notes = new List<Note>();
+                foreach (var line in fileLines)
+                {
+                    //Parse each line into a note
+                    notes.Add(NoteParser.DeserializeNote(line));
+                }
+
+                return notes;
             }
 
-            return notes;
+            return new List<Note>();
         }
     }
 }
