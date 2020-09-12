@@ -3,6 +3,16 @@
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFramework>netcoreapp3.1</TargetFramework>
+    <Version>1.8.0</Version>
+    <PackAsTool>true</PackAsTool>
+    <PackageId>Skikra.YoCli</PackageId>
+    <ToolCommandName>yo</ToolCommandName>
+    <Authors>Skikra</Authors>
+    <Company>Skikra</Company>
+    <Description>A command line tool for taking notes. Easy to use you can write, read and find notes.</Description>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageTags>Cli, Command, Command Line</PackageTags>
+    <RepositoryUrl>https://github.com/elrhomariyounes/YoCli</RepositoryUrl>
   </PropertyGroup>
 
   <ItemGroup>
