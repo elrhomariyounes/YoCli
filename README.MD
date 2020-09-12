@@ -4,7 +4,7 @@ Yo Command Line
 
 [![NuGet][nuget-badge]][nuget]
 
-[nuget]: https://www.nuget.org/packages/Skikra.YoCli/1.8.0.
+[nuget]: https://www.nuget.org/packages/Skikra.YoCli/1.8.0
 [nuget-badge]: https://img.shields.io/badge/nuget-v1.8.0-blue?style=flat-square
 
 
