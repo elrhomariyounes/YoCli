@@ -35,15 +35,5 @@ namespace YoCli
                 return 1;
             }
         }
-
-        [Option(Description = "The Subject")]
-        public string Subject { get; }
-
-        private void OnExecute()
-        {
-            var name = Prompt.GetString("Your name ?");
-            var subject = Subject ?? "world";
-            _console.WriteLine("Hello " + name);
-        }
     }
 }
