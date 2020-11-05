@@ -29,7 +29,7 @@ namespace YoCli.Services.Implementations
             int month = options["Month"];
 
             //Check if there is no options
-            if (String.IsNullOrEmpty(content) && day == 0 & month == 0)
+            if (String.IsNullOrEmpty(content) && day == 0 && month == 0)
             {
                 _console.ForegroundColor = ConsoleColor.DarkRed;
                 _console.WriteLine("Invalid command please choose an option. Run 'yo find --help' for more details");
