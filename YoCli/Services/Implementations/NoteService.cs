@@ -34,7 +34,7 @@ namespace YoCli.Services.Implementations
                 _console.ForegroundColor = ConsoleColor.DarkRed;
                 _console.WriteLine("Invalid command please choose an option. Run 'yo find --help' for more details");
                 _console.ResetColor();
-                return Task.FromResult(1);
+                return Task.FromResult(-1);
             }
             else
             {
@@ -89,7 +89,7 @@ namespace YoCli.Services.Implementations
                 _console.ForegroundColor = ConsoleColor.DarkRed;
                 _console.WriteLine("Only one option should be set !!");
                 _console.ResetColor();
-                return Task.FromResult(1);
+                return Task.FromResult(-1);
             }
 
             // Init collection
