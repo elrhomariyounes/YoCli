@@ -25,8 +25,7 @@ namespace YoCli.Utils
             //Parse date
             try
             {
-                writtenDate = DateTime.ParseExact(noteLine[0], "dd/MM/yyyy HH:mm:ss", CultureInfo.InvariantCulture);
-
+                writtenDate = DateTime.Parse(noteLine[0]);
             }
             catch (Exception)
             {
