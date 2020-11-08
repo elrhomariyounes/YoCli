@@ -4,8 +4,8 @@ Yo Command Line
 
 [![NuGet][nuget-badge]][nuget]
 
-[nuget]: https://www.nuget.org/packages/Skikra.YoCli/1.8.0
-[nuget-badge]: https://img.shields.io/badge/nuget-v1.8.0-blue?style=flat-square
+[nuget]: https://www.nuget.org/packages/Skikra.YoCli/1.9.4
+[nuget-badge]: https://img.shields.io/badge/nuget-v1.9.4-blue?style=flat-square
 
 
 This is a command line tool for writing and reading notes built with .Net Core. I will continue to make improvements, release updates, and accept contributions.
@@ -15,7 +15,7 @@ This is a command line tool for writing and reading notes built with .Net Core. 
 Install the [Tool][nuget] as a global or local tool.
 
 ```
-$ dotnet tool install --global Skikra.YoCli --version 1.8.0
+$ dotnet tool install --global Skikra.YoCli --version 1.9.4
 ```
 
 ## Usage
