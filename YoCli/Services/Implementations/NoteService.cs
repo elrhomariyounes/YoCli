@@ -34,9 +34,7 @@ namespace YoCli.Services.Implementations
                 return Task.FromResult(1);
             }
 
-            _console.ForegroundColor = ConsoleColor.DarkRed;
-            _console.WriteLine("Invalid path!");
-            _console.ResetColor();
+            ConsoleErrorMessage("Invalid path!");
             return Task.FromResult(-1);
         }
 
@@ -49,9 +47,7 @@ namespace YoCli.Services.Implementations
             //Check if there is no options
             if (String.IsNullOrEmpty(content) && day == 0 && month == 0)
             {
-                _console.ForegroundColor = ConsoleColor.DarkRed;
-                _console.WriteLine("Invalid command please choose an option. Run 'yo find --help' for more details");
-                _console.ResetColor();
+                ConsoleErrorMessage("Invalid command please choose an option. Run 'yo find --help' for more details");
                 return Task.FromResult(-1);
             }
             else
@@ -123,16 +119,12 @@ namespace YoCli.Services.Implementations
                 }
                 catch (Exception)
                 {
-                    _console.ForegroundColor = ConsoleColor.DarkRed;
-                    _console.WriteLine("Unable to import notes! Please check json file format in the documentation");
-                    _console.ResetColor();
+                    ConsoleErrorMessage("Unable to import notes! Please check json file format in the documentation");
                     return Task.FromResult(-1);
                 }
             }
 
-            _console.ForegroundColor = ConsoleColor.DarkRed;
-            _console.WriteLine("Unable to import notes!");
-            _console.ResetColor();
+            ConsoleErrorMessage("Unable to import notes!");
             return Task.FromResult(-1);
         }
 
@@ -147,9 +139,7 @@ namespace YoCli.Services.Implementations
             var dictionaryValues = options.Values.ToList();
             if(dictionaryValues.Where(o => o == true).Count() > 1)
             {
-                _console.ForegroundColor = ConsoleColor.DarkRed;
-                _console.WriteLine("Only one option should be set !!");
-                _console.ResetColor();
+                ConsoleErrorMessage("Only one option should be set !!");
                 return Task.FromResult(-1);
             }
 
@@ -238,6 +228,13 @@ namespace YoCli.Services.Implementations
             }
 
             return new List<Note>();
+        }
+
+        private void ConsoleErrorMessage(string message)
+        {
+            _console.ForegroundColor = ConsoleColor.DarkRed;
+            _console.WriteLine(message);
+            _console.ResetColor();
         }
     }
 }
