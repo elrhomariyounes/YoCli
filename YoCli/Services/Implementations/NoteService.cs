@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 using YoCli.Models;
 using YoCli.Services.Interfaces;
 using YoCli.Utils;
-
+using System.Text.Json;
 namespace YoCli.Services.Implementations
 {
     /// <inheritdoc cref="INoteService"/>
@@ -20,6 +20,24 @@ namespace YoCli.Services.Implementations
         {
             _console = console;
             _notes = new List<Note>(this.GetNotes());
+        }
+
+        public Task<int> ExportNotesToJsonFileAsync(string path)
+        {
+            if (Directory.Exists(path))
+            {
+                var json = JsonSerializer.Serialize(_notes);
+                File.WriteAllText(Path.Combine(path, "notes.json"), json);
+                _console.ForegroundColor = ConsoleColor.Green;
+                _console.WriteLine("Notes exported");
+                _console.ResetColor();
+                return Task.FromResult(1);
+            }
+
+            _console.ForegroundColor = ConsoleColor.DarkRed;
+            _console.WriteLine("Invalid path!");
+            _console.ResetColor();
+            return Task.FromResult(-1);
         }
 
         public Task<int> FindNotesAsync(string content, Dictionary<string, int> options)

@@ -9,7 +9,8 @@ namespace YoCli.Commands
     [Subcommand(
         typeof(WriteCmd),
         typeof(ReadCmd),
-        typeof(FindCmd))
+        typeof(FindCmd),
+        typeof(ExportCmd))
     ]
     public class YoCmd : BaseCli
     {

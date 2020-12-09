@@ -1,27 +1,26 @@
 ﻿using McMaster.Extensions.CommandLineUtils;
 using System.Threading.Tasks;
 using YoCli.Services.Interfaces;
-
 namespace YoCli.Commands
 {
     /// <summary>
-    /// Represent the sub command write to the main command yo
+    /// Represent the sub command export to the main command yo
     /// </summary>
-    [Command(Name = "write", Description = "Write a note")]
-    public class WriteCmd : BaseCli
+    [Command(Name = "export", Description = "Export notes to Json file")]
+    public class ExportCmd : BaseCli
     {
-        public WriteCmd(IConsole console, INoteService noteService)
+        public ExportCmd(IConsole console, INoteService noteService)
         {
             _console = console;
             _noteService = noteService;
         }
 
         [Argument(0)]
-        public string Note { get; }
+        public string Path { get; }
 
         protected override async Task<int> OnExecute(CommandLineApplication app)
         {
-            return await _noteService.WriteNoteAsync(Note);
+            return await _noteService.ExportNotesToJsonFileAsync(Path);
         }
     }
 }

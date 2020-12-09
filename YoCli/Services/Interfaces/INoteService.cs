@@ -29,5 +29,12 @@ namespace YoCli.Services.Interfaces
         /// <param name="options"></param>
         /// <returns></returns>
         Task<int> FindNotesAsync(string content, Dictionary<string, int> options);
+
+        /// <summary>
+        /// Exports notes to JSON file
+        /// </summary>
+        /// <param name="path">Path to save the JSON file</param>
+        /// <returns></returns>
+        Task<int> ExportNotesToJsonFileAsync(string path);
     }
 }
