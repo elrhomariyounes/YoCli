@@ -93,6 +93,49 @@ namespace YoCli.Services.Implementations
             return Task.FromResult(1);
         }
 
+        public Task<int> ImportNotesFromJsonFileAsync(string path)
+        {
+            if (File.Exists(path))
+            {
+                // Reading from file
+                var json = File.ReadAllText(path);
+
+                //Path to save notes
+                var appPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Notes.txt");
+
+                //Delete if already exists
+                if (File.Exists(appPath))
+                    File.Delete(appPath);
+                try
+                {
+                    var notes = JsonSerializer.Deserialize<List<Note>>(json);
+                    foreach (var note in notes)
+                    {
+                        //Formated note
+                        string formatedNote = $"{note.WriteDate}={note.Content}";
+                        File.AppendAllLines(appPath, new string[] { formatedNote });
+                    }
+
+                    _console.ForegroundColor = ConsoleColor.Green;
+                    _console.WriteLine("Notes imported");
+                    _console.ResetColor();
+                    return Task.FromResult(1);
+                }
+                catch (Exception)
+                {
+                    _console.ForegroundColor = ConsoleColor.DarkRed;
+                    _console.WriteLine("Unable to import notes! Please check json file format in the documentation");
+                    _console.ResetColor();
+                    return Task.FromResult(-1);
+                }
+            }
+
+            _console.ForegroundColor = ConsoleColor.DarkRed;
+            _console.WriteLine("Unable to import notes!");
+            _console.ResetColor();
+            return Task.FromResult(-1);
+        }
+
         public Task<int> ReadNotesAsync(Dictionary<string, bool> options)
         {
             // Get options values
@@ -145,7 +188,7 @@ namespace YoCli.Services.Implementations
             //Note file path
             var path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Notes.txt");
 
-            //Remove double dots
+            //Remove equals
             if (content.Contains("="))
             {
                 content = content.Replace("=", "->");

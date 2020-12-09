@@ -36,5 +36,12 @@ namespace YoCli.Services.Interfaces
         /// <param name="path">Path to save the JSON file</param>
         /// <returns></returns>
         Task<int> ExportNotesToJsonFileAsync(string path);
+
+        /// <summary>
+        /// Imports notes from exported JSON file
+        /// </summary>
+        /// <param name="path">Path to exported JSON file</param>
+        /// <returns></returns>
+        Task<int> ImportNotesFromJsonFileAsync(string path);
     }
 }
