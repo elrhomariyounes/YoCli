@@ -16,7 +16,7 @@ namespace YoCli.Commands
             _noteService = noteService;
         }
 
-        [Argument(0)]
+        [Argument(0, Description = "Path to Json file to import from")]
         public string Path { get; }
 
         protected override async Task<int> OnExecute(CommandLineApplication app)

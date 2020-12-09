@@ -16,7 +16,7 @@ namespace YoCli.Commands
             _noteService = noteService;
         }
 
-        [Argument(0)]
+        [Argument(0, Description = "Content of the note")]
         public string Note { get; }
 
         protected override async Task<int> OnExecute(CommandLineApplication app)

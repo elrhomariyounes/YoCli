@@ -15,7 +15,7 @@ namespace YoCli.Commands
             _noteService = noteService;
         }
 
-        [Argument(0)]
+        [Argument(0, Description = "The directory where to save the file")]
         public string Path { get; }
 
         protected override async Task<int> OnExecute(CommandLineApplication app)
