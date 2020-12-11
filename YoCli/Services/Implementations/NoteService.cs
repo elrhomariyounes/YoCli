@@ -1,4 +1,5 @@
 ﻿using McMaster.Extensions.CommandLineUtils;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -7,232 +8,197 @@ using System.Linq;
 using System.Threading.Tasks;
 using YoCli.Models;
 using YoCli.Services.Interfaces;
-using YoCli.Utils;
-using System.Text.Json;
+
 namespace YoCli.Services.Implementations
 {
     /// <inheritdoc cref="INoteService"/>
     public class NoteService : INoteService
     {
+        private readonly string storageFilePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "notes.json");
+
         private readonly IConsole _console;
         private readonly List<Note> _notes;
+
         public NoteService(IConsole console)
         {
             _console = console;
             _notes = new List<Note>(this.GetNotes());
         }
 
-        public Task<int> ExportNotesToJsonFileAsync(string path)
+        public Task<int> ExportNotesToJsonFileAsync(string filePathToExport)
         {
-            if (Directory.Exists(path))
+            if (!Directory.Exists(filePathToExport))
             {
-                var json = JsonSerializer.Serialize(_notes);
-                File.WriteAllText(Path.Combine(path, "notes.json"), json);
-                _console.ForegroundColor = ConsoleColor.Green;
-                _console.WriteLine("Notes exported");
-                _console.ResetColor();
-                return Task.FromResult(1);
+                ConsoleErrorMessage("Invalid path!");
+                return Task.FromResult(-1);
             }
 
-            ConsoleErrorMessage("Invalid path!");
-            return Task.FromResult(-1);
+            File.Copy(storageFilePath, Path.Combine(filePathToExport, "notes.json"));
+
+            ConsoleSuccessMessage("Notes exported");
+            return Task.FromResult(1);
         }
 
         public Task<int> FindNotesAsync(string content, Dictionary<string, int> options)
         {
-            IEnumerable<Note> notes = new List<Note>(this._notes);
+            IEnumerable<Note> notes = new List<Note>(_notes);
             int day = options["Day"];
             int month = options["Month"];
 
-            //Check if there is no options
-            if (String.IsNullOrEmpty(content) && day == 0 && month == 0)
+            // Check if there is no options
+            if (string.IsNullOrEmpty(content) && day == 0 && month == 0)
             {
                 ConsoleErrorMessage("Invalid command please choose an option. Run 'yo find --help' for more details");
                 return Task.FromResult(-1);
             }
-            else
+
+            // Filter by content
+            if (!string.IsNullOrEmpty(content))
             {
-                int monthFilter = month;
-                if (month == 0)
-                    monthFilter = DateTime.Today.Month;
-                    
-                // Filter the content
-                if (!String.IsNullOrEmpty(content))
-                {
-                    notes = notes.Where(n => n.Content.ToLower().Contains(content.ToLower()));
-                }
-
-                //Filter by month
-                if(month != 0)
-                {
-                    notes = notes.Where(
-                        n => n.WriteDate.Date.Month == month &&
-                        n.WriteDate.Date.Year == DateTime.Today.Year);
-                }
-
-                //Filter by day
-                if (day != 0)
-                {
-                    notes = notes.Where(
-                        n => n.WriteDate.Date.Day == day &&
-                        n.WriteDate.Date.Month == monthFilter &&
-                        n.WriteDate.Date.Year == DateTime.Today.Year);
-                }
-
+                notes = notes.Where(n => n.Content.ToLower().Contains(content.ToLower()));
             }
 
-            foreach (var note in notes)
+            // Filter by month
+            if (month != 0)
             {
-                _console.WriteLine($"- {note.WriteDate} : {note.Content}");
+                notes = notes.Where(n => n.WriteDate.Date.Month == month && n.WriteDate.Date.Year == DateTime.Today.Year);
             }
 
+            // Filter by day
+            if (day != 0)
+            {
+                notes = notes.Where(n => n.WriteDate.Date.Day == day && n.WriteDate.Date.Month == DateTime.Today.Month && n.WriteDate.Date.Year == DateTime.Today.Year);
+            }
+
+            notes.ToList().ForEach(n => _console.WriteLine($"- {n.WriteDate} : {n.Content}"));
+            
             return Task.FromResult(1);
         }
 
-        public Task<int> ImportNotesFromJsonFileAsync(string path)
+        public Task<int> ImportNotesFromJsonFileAsync(string filePathToImport)
         {
-            if (File.Exists(path))
+            if (!File.Exists(filePathToImport))
             {
-                // Reading from file
-                var json = File.ReadAllText(path);
-
-                //Path to save notes
-                var appPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Notes.txt");
-
-                //Delete if already exists
-                if (File.Exists(appPath))
-                    File.Delete(appPath);
-                try
-                {
-                    var notes = JsonSerializer.Deserialize<List<Note>>(json);
-                    foreach (var note in notes)
-                    {
-                        //Formated note
-                        string formatedNote = $"{note.WriteDate}={note.Content}";
-                        File.AppendAllLines(appPath, new string[] { formatedNote });
-                    }
-
-                    _console.ForegroundColor = ConsoleColor.Green;
-                    _console.WriteLine("Notes imported");
-                    _console.ResetColor();
-                    return Task.FromResult(1);
-                }
-                catch (Exception)
-                {
-                    ConsoleErrorMessage("Unable to import notes! Please check json file format in the documentation");
-                    return Task.FromResult(-1);
-                }
+                ConsoleErrorMessage("Unable to import notes!");
+                return Task.FromResult(-1);
             }
 
-            ConsoleErrorMessage("Unable to import notes!");
-            return Task.FromResult(-1);
+            try
+            {
+                // Read from file
+                var jsonToImport = File.ReadAllText(filePathToImport);
+
+                // Deserialize notes to import
+                var notesToImport = JsonConvert.DeserializeObject<List<Note>>(jsonToImport);
+
+                _notes.AddRange(notesToImport);
+
+                // Serialize notes to save
+                var jsonToSave = JsonConvert.SerializeObject(_notes, Formatting.Indented);
+
+                // Write to file
+                File.WriteAllText(storageFilePath, jsonToSave);
+
+                ConsoleSuccessMessage("Notes imported");
+                return Task.FromResult(1);
+            }
+            catch (Exception)
+            {
+                ConsoleErrorMessage("Unable to import notes! Please check json file format in the documentation");
+                return Task.FromResult(-1);
+            }
         }
 
         public Task<int> ReadNotesAsync(Dictionary<string, bool> options)
         {
+            // Check if more than one option is set
+            if (options.Values.Count(o => o == true) > 1)
+            {
+                ConsoleErrorMessage("One option should be set!");
+                return Task.FromResult(-1);
+            }
+
             // Get options values
             bool isSetTodayOption = options["Today"];
             bool isSetYesterdayOption = options["Yesterday"];
             bool isSetWeekOption = options["Week"];
 
-            //Check if more than one option is set
-            var dictionaryValues = options.Values.ToList();
-            if(dictionaryValues.Where(o => o == true).Count() > 1)
-            {
-                ConsoleErrorMessage("Only one option should be set !!");
-                return Task.FromResult(-1);
-            }
-
-            // Init collection
-            IEnumerable<Note> notes = null;
-                
-            //Filter notes
+            // Filter notes
             if (isSetYesterdayOption)
             {
-                notes = _notes.Where(n => n.WriteDate.Date == DateTime.Today.AddDays(-1));
+                _notes.Where(n => n.WriteDate.Date == DateTime.Today.AddDays(-1))
+                      .ToList()
+                      .ForEach(n => _console.WriteLine($"- {n.WriteDate} : {n.Content}"));
             }
-
-            else
+            else if (isSetWeekOption)
             {
-                if (isSetWeekOption)
-                {
-                    notes = _notes.Where(n => CheckIfSameWeek(n.WriteDate, DateTime.Today));
-                }
-                else
-                {
-                    notes = _notes.Where(n => n.WriteDate.Date == DateTime.Today);
-                }
+                var c = CultureInfo.CurrentCulture.Calendar;
+                var rule = CalendarWeekRule.FirstDay;
+                var firstDayOfWeek = DayOfWeek.Monday;
+
+                _notes.Where(n => c.GetWeekOfYear(n.WriteDate, rule, firstDayOfWeek) == c.GetWeekOfYear(DateTime.Today, rule, firstDayOfWeek))
+                      .ToList()
+                      .ForEach(n => _console.WriteLine($"- {n.WriteDate} : {n.Content}"));
             }
-                
-
-            foreach (var note in notes)
+            else // isSetTodayOption
             {
-                _console.WriteLine($"- {note.WriteDate} : {note.Content}");
+                _notes.Where(n => n.WriteDate.Date == DateTime.Today)
+                      .ToList()
+                      .ForEach(n => _console.WriteLine($"- {n.WriteDate} : {n.Content}"));
             }
 
             return Task.FromResult(1);
         }
 
-        public async Task<int> WriteNoteAsync(string content)
+        public Task<int> WriteNoteAsync(string content)
         {
-            //Note file path
-            var path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Notes.txt");
+            // Init note
+            Note note = new Note() { WriteDate = DateTime.Now, Content = content };
+            _notes.Add(note);
 
-            //Remove equals
-            if (content.Contains("="))
-            {
-                content = content.Replace("=", "->");
-            }
+            _console.WriteLine($"Time : {note.WriteDate}, Content : {note.Content}");
 
-            //Format note
-            string note = $"{DateTime.Now}={content}";
-            _console.WriteLine($"Time : {DateTime.Now}, Content : {content}");
+            SaveNotes();
 
-            //Write to file
-            await File.AppendAllLinesAsync(path, new string[] { note });
-
-            return 1;
-        }
-
-        private bool CheckIfSameWeek(DateTime date1, DateTime date2)
-        {
-            var cal = DateTimeFormatInfo.CurrentInfo.Calendar;
-            var d1 = date1.Date.AddDays(-1 * (int)cal.GetDayOfWeek(date1));
-            var d2 = date2.Date.AddDays(-1 * (int)cal.GetDayOfWeek(date2));
-
-            return d1 == d2;
+            return Task.FromResult(1);
         }
 
         /// <summary>
-        /// Read notes file and parse lines to notes
+        /// Read notes from storage file
         /// </summary>
         /// <returns>List of notes</returns>
         private List<Note> GetNotes()
         {
-            //File path
-            var path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Notes.txt");
+            var notes = new List<Note>();
 
-            //Read file
-            if (File.Exists(path))
+            if (File.Exists(storageFilePath))
             {
-                string[] fileLines = File.ReadAllLines(path);
-
-                var notes = new List<Note>();
-                foreach (var line in fileLines)
-                {
-                    //Parse each line into a note
-                    notes.Add(NoteParser.DeserializeNote(line));
-                }
-
-                return notes;
+                var json = File.ReadAllText(storageFilePath);
+                notes = JsonConvert.DeserializeObject<List<Note>>(json);
             }
 
-            return new List<Note>();
+            return notes;
+        }
+
+        /// <summary>
+        /// Write notes to storage file
+        /// </summary>
+        private void SaveNotes()
+        {
+            var json = JsonConvert.SerializeObject(_notes, Formatting.Indented);
+            File.WriteAllText(storageFilePath, json);
         }
 
         private void ConsoleErrorMessage(string message)
         {
             _console.ForegroundColor = ConsoleColor.DarkRed;
+            _console.WriteLine(message);
+            _console.ResetColor();
+        }
+
+        private void ConsoleSuccessMessage(string message)
+        {
+            _console.ForegroundColor = ConsoleColor.Green;
             _console.WriteLine(message);
             _console.ResetColor();
         }
