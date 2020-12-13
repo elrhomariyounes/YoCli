@@ -1,8 +1,8 @@
 ﻿using McMaster.Extensions.CommandLineUtils;
-using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Text.Json;
 using System.Threading.Tasks;
 using YoCli.Commons;
 using YoCli.Models;
@@ -39,7 +39,7 @@ namespace YoCli.Commands
             {
                 // Read from file
                 var jsonToImport = File.ReadAllText(Path);
-                var notesToImport = JsonConvert.DeserializeObject<List<Note>>(jsonToImport);
+                var notesToImport = JsonSerializer.Deserialize<List<Note>>(jsonToImport);
 
                 _context.Data.AddRange(notesToImport);
                 _context.SaveChanges();

@@ -1,7 +1,7 @@
-﻿using Newtonsoft.Json;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Text.Json;
 using YoCli.Commons;
 using YoCli.Models;
 
@@ -20,7 +20,7 @@ namespace YoCli.Data
 
         public void SaveChanges()
         {
-            var json = JsonConvert.SerializeObject(Data, Formatting.Indented);
+            var json = JsonSerializer.Serialize(Data);
             File.WriteAllText(storageFilePath, json);
         }
 
@@ -31,7 +31,7 @@ namespace YoCli.Data
             if (File.Exists(storageFilePath))
             {
                 var json = File.ReadAllText(storageFilePath);
-                notes = JsonConvert.DeserializeObject<List<Note>>(json);
+                notes = JsonSerializer.Deserialize<List<Note>>(json);
             }
 
             return notes;
