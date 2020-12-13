@@ -1,4 +1,5 @@
 ﻿using McMaster.Extensions.CommandLineUtils;
+using Newtonsoft.Json;
 using System.IO;
 using System.Threading.Tasks;
 using YoCli.Commons;
@@ -32,7 +33,8 @@ namespace YoCli.Commands
                 return Task.FromResult(-1);
             }
 
-            //File.Copy(storageFilePath, Path.Combine(filePathToExport, "notes.json"));
+            var json = JsonConvert.SerializeObject(_context.Data, Formatting.Indented);
+            File.WriteAllText(System.IO.Path.Combine(Path, "notes.json"), json);
 
             ConsoleMessage.PrintSuccess(_console, "Notes exported");
             return Task.FromResult(1);
