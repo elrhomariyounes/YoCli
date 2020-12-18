@@ -20,7 +20,7 @@ $ dotnet tool install --global Skikra.YoCli --version 2.0.0
 
 ## Usage
 
-The main command is **yo** that have three sub commands :
+The main command is **yo** that have five sub commands :
 
 ```
 2.0.0
