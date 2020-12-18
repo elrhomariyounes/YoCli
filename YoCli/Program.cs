@@ -1,37 +1,34 @@
-﻿using McMaster.Extensions.CommandLineUtils;
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using System;
 using System.Threading.Tasks;
 using YoCli.Commands;
-using YoCli.Services.Implementations;
-using YoCli.Services.Interfaces;
+using YoCli.Commons;
+using YoCli.Data;
+using YoCli.Models;
 
 namespace YoCli
 {
-    public class Program
+    class Program
     {
-        private readonly IConsole _console;
 
-        public Program(IConsole console)
-        {
-            _console = console;
-        }
-
-        public static async Task<int> Main(string[] args)
+        static async Task<int> Main(string[] args)
         {
             var builder = new HostBuilder().ConfigureServices((hostContext, services) =>
             {
-                services.AddSingleton<INoteService, NoteService>();
+                services.AddSingleton<IContext<Note>, NoteContext>();
             });
 
             try
             {
-                return await builder.RunCommandLineApplicationAsync<YoCmd>(args);
+                return await builder.RunCommandLineApplicationAsync<Yo>(args);
             }
             catch (Exception ex)
             {
+                Console.ForegroundColor = ConsoleColor.Red;
                 Console.WriteLine(ex.Message);
+                Console.ResetColor();
+
                 return 1;
             }
         }
