@@ -43,5 +43,12 @@ namespace YoCli.Services.Interfaces
         /// <param name="path">Path to exported JSON file</param>
         /// <returns></returns>
         Task<int> ImportNotesFromJsonFileAsync(string path);
+
+        /// <summary>
+        /// Remove note written in a specified date
+        /// </summary>
+        /// <param name="date">date filter</param>
+        /// <returns></returns>
+        Task<int> RemoveNoteByDateAsync(string date);
     }
 }

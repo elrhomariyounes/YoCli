@@ -22,6 +22,39 @@ namespace YoCli.Services.Implementations
             _notes = new List<Note>(this.GetNotes());
         }
 
+        public Task<int> RemoveNoteByDateAsync(string date)
+        {
+            //Note file path
+            var path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Notes.txt");
+
+            try
+            {
+                //Parsing the date if invalid catch exception a console an error message
+                var parsedDate = DateTime.Parse(date);
+
+                //Filter lines to keep
+                var notesToKeep = File.ReadLines(path).Where(l => !l.Contains(date));
+
+                //Write in temp file
+                var tempFile = Path.GetTempFileName();
+                File.WriteAllLines(tempFile, notesToKeep);
+
+                //Move file
+                File.Move(tempFile, path, true);
+
+                _console.ForegroundColor = ConsoleColor.Green;
+                _console.WriteLine("Notes deleted");
+                _console.ResetColor();
+                return Task.FromResult(1);
+            }
+            catch (Exception)
+            {
+                ConsoleErrorMessage("Something went wrong!!");
+                return Task.FromResult(-1);
+            }
+            
+        }
+
         public Task<int> ExportNotesToJsonFileAsync(string path)
         {
             if (Directory.Exists(path))
@@ -236,5 +269,7 @@ namespace YoCli.Services.Implementations
             _console.WriteLine(message);
             _console.ResetColor();
         }
+
+        
     }
 }

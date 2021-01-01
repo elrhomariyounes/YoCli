@@ -11,7 +11,8 @@ namespace YoCli.Commands
         typeof(ReadCmd),
         typeof(FindCmd),
         typeof(ExportCmd),
-        typeof(ImportCmd))
+        typeof(ImportCmd),
+        typeof(RemoveCmd))
     ]
     public class YoCmd : BaseCli
     {
