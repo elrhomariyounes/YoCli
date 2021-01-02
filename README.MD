@@ -20,7 +20,7 @@ $ dotnet tool install --global Skikra.YoCli --version 2.0.0
 
 ## Usage
 
-The main command is **yo** that have five sub commands :
+The main command is **yo** that have six sub commands :
 
 ```
 2.0.0
@@ -36,6 +36,7 @@ Commands:
   find          Find notes
   import        Import notes from Json file
   read          Read notes
+  remove        Remove a note by a specified date
   write         Write a note
 
 Run 'yo [command] -?|-h|--help' for more information about a command.
@@ -57,7 +58,7 @@ $ yo export --help
 
 ### Import
 
-Check json file example [example](https://github.com/elrhomariyounes/YoCli/blob/master/example/notes.json)
+Check json file [example](https://github.com/elrhomariyounes/YoCli/blob/master/example/notes.json)
 
 ```
 $ yo import --help
@@ -101,6 +102,22 @@ Options:
   -y|--yesterday  Read yesterday notes
   -w|--week       Read current week notes
   -?|-h|--help    Show help information
+```
+
+### Remove
+
+
+```
+$ yo remove --help
+Remove a note by a specified date
+
+Usage: yo remove [options] <Date>
+
+Arguments:
+  Date          Date criteria in local date format
+
+Options:
+  -?|-h|--help  Show help information
 ```
 
 ### Find
