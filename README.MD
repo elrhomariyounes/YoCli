@@ -132,6 +132,7 @@ Options:
   -c|--content[:<CONTENT>]  Find notes that contains this value
   -d|--day[:<DAY>]          Find notes written this day on the current month
   -m|--month[:<MONTH>]      Find notes written this month on the current year
+  -y|--year[:<YEAR>]        Find notes written this year
   -?|-h|--help              Show help information
 ```
 
