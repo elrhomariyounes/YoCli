@@ -25,11 +25,15 @@ namespace YoCli.Commands
         [Option(CommandOptionType.SingleOrNoValue, Description = "Find notes written this month on the current year")]
         public (bool hasValue, int value) Month { get; set; }
 
+        [Option(CommandOptionType.SingleOrNoValue, Description = "Find notes written this year")]
+        public (bool hasValue, int value) Year { get; set; }
+
         protected override async Task<int> OnExecute(CommandLineApplication app)
         {
             var options = new Dictionary<string, int>();
             options.Add("Day", this.Day.value);
             options.Add("Month", this.Month.value);
+            options.Add("Year", this.Year.value);
             var content = "";
             if (this.Content.hasValue)
                 content = this.Content.value;

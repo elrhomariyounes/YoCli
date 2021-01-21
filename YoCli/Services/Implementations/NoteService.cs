@@ -76,9 +76,10 @@ namespace YoCli.Services.Implementations
             IEnumerable<Note> notes = new List<Note>(this._notes);
             int day = options["Day"];
             int month = options["Month"];
+            int year = options["Year"];
 
             //Check if there is no options
-            if (String.IsNullOrEmpty(content) && day == 0 && month == 0)
+            if (string.IsNullOrEmpty(content) && day == 0 && month == 0 && year == 0)
             {
                 ConsoleErrorMessage("Invalid command please choose an option. Run 'yo find --help' for more details");
                 return Task.FromResult(-1);
@@ -88,11 +89,21 @@ namespace YoCli.Services.Implementations
                 int monthFilter = month;
                 if (month == 0)
                     monthFilter = DateTime.Today.Month;
-                    
+
+                int yearFilter = year;
+                if (year == 0)
+                    yearFilter = DateTime.Today.Year;
+
                 // Filter the content
                 if (!String.IsNullOrEmpty(content))
                 {
                     notes = notes.Where(n => n.Content.ToLower().Contains(content.ToLower()));
+                }
+
+                //Filter by year
+                if (year != 0)
+                {
+                    notes = notes.Where(n => n.WriteDate.Year == year);
                 }
 
                 //Filter by month
@@ -100,7 +111,7 @@ namespace YoCli.Services.Implementations
                 {
                     notes = notes.Where(
                         n => n.WriteDate.Date.Month == month &&
-                        n.WriteDate.Date.Year == DateTime.Today.Year);
+                        n.WriteDate.Date.Year == yearFilter);
                 }
 
                 //Filter by day
@@ -109,7 +120,7 @@ namespace YoCli.Services.Implementations
                     notes = notes.Where(
                         n => n.WriteDate.Date.Day == day &&
                         n.WriteDate.Date.Month == monthFilter &&
-                        n.WriteDate.Date.Year == DateTime.Today.Year);
+                        n.WriteDate.Date.Year == yearFilter);
                 }
 
             }
