@@ -15,7 +15,7 @@ This is a command line tool for writing and reading notes built with .Net Core. 
 Install the [Tool][nuget] as a global or local tool.
 
 ```
-$ dotnet tool install --global Skikra.YoCli --version 2.0.0
+$ dotnet tool install --global Skikra.YoCli --version 2.2.0
 ```
 
 ## Usage
@@ -23,7 +23,7 @@ $ dotnet tool install --global Skikra.YoCli --version 2.0.0
 The main command is **yo** that have six sub commands :
 
 ```
-2.0.0
+2.2.0
 
 Usage: yo [command] [options]
 
