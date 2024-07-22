@@ -265,7 +265,8 @@ namespace YoCli.Services.Implementations
                 foreach (var line in fileLines)
                 {
                     //Parse each line into a note
-                    notes.Add(NoteParser.DeserializeNote(line));
+                    if (!string.IsNullOrEmpty(line))
+                        notes.Add(NoteParser.DeserializeNote(line));
                 }
 
                 return notes;
